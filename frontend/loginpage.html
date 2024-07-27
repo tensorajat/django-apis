@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f8f9fa;
+        }
+        .login-container, .forgot-password-container, .create-account-container {
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        .logo {
+            max-width: 100%;
+            height: auto;
+        }
+        .google-btn {
+            background-color: #4285F4;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<div id="loginPage" class="login-container">
+    <div class="logo-container">
+        <img src="site_logo.png" alt="Company Logo" class="logo">
+    </div>
+    
+    <form>
+        <div class="mb-3">
+            <label for="email" class="form-label">Email Address</label>
+            <input type="email" class="form-control" id="email" placeholder="Enter valid email">
+        </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" class="form-control" id="password" placeholder="Password">
+        </div>
+        <div class="mb-3 form-check">
+            <input type="checkbox" class="form-check-input" id="keepSignedIn">
+            <label class="form-check-label" for="keepSignedIn">Keep me signed in</label>
+        </div>
+        <div class="mb-3">
+            <div class="g-recaptcha" data-sitekey="your-recaptcha-site-key"></div>
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Login</button>
+        <div class="text-center mt-3">
+            <a href="#" class="text-decoration-none" onclick="showForgotPassword()">Forgot Password?</a>
+        </div>
+    </form>
+    <hr>
+    <button class="btn btn-google btn-block google-btn" id="googleSignInButton">Continue with Google</button>
+    <div class="text-center mt-3">
+        <a href="#" class="text-decoration-none" onclick="showCreateAccount()">Create an account</a>
+    </div>
+</div>
+
+<div id="forgotPasswordPage" class="forgot-password-container" style="display:none;">
+    <div class="logo-container">
+        <img src="site_logo.png" alt="Company Logo" class="logo">
+    </div>
+    <h3 class="text-center mb-4">Forgot Password?</h3>
+    <p>Enter your email to get password reset link.</p>
+    <form>
+        <div class="mb-3">
+            <label for="forgotEmail" class="form-label">Email Address</label>
+            <input type="email" class="form-control" id="forgotEmail" placeholder="hello@bluestock.in">
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Password Reset</button>
+        <div class="text-center mt-3">
+            <a href="#" class="text-decoration-none" onclick="showLogin()">Back to login</a>
+        </div>
+    </form>
+</div>
+
+<div id="createAccountPage" class="create-account-container" style="display:none;">
+    <div class="logo-container">
+        <img src="site_logo.png" alt="Company Logo" class="logo">
+    </div>
+    <h3 class="text-center mb-4">Create an Account</h3>
+    <form>
+        <div class="mb-3">
+            <label for="createName" class="form-label">Name</label>
+            <input type="text" class="form-control" id="createName" placeholder="Enter your name">
+        </div>
+        <div class="mb-3">
+            <label for="createEmail" class="form-label">Email Address</label>
+            <input type="email" class="form-control" id="createEmail" placeholder="Enter valid email">
+        </div>
+        <div class="mb-3">
+            <label for="createPassword" class="form-label">Password</label>
+            <input type="password" class="form-control" id="createPassword" placeholder="Password">
+        </div>
+        <div class="mb-3">
+            <div class="g-recaptcha" data-sitekey="your-recaptcha-site-key"></div>
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Sign Up</button>
+        <div class="text-center mt-3">
+            <a href="#" class="text-decoration-none" onclick="showLogin()">Back to login</a>
+        </div>
+    </form>
+    <hr>
+    <button class="btn btn-google btn-block google-btn" id="googleSignUpButton">Continue with Google</button>
+</div>
+
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script>
+    function handleCredentialResponse(response) {
+        console.log("Encoded JWT ID token: " + response.credential);
+    }
+    window.onload = function () {
+        google.accounts.id.initialize({
+            client_id: 'YOUR_GOOGLE_CLIENT_ID',
+            callback: handleCredentialResponse
+        });
+        google.accounts.id.renderButton(
+            document.getElementById('googleSignInButton'),
+            { theme: 'outline', size: 'large' }  // customization attributes
+        );
+        google.accounts.id.renderButton(
+            document.getElementById('googleSignUpButton'),
+            { theme: 'outline', size: 'large' }  // customization attributes
+        );
+        google.accounts.id.prompt();  // also display the One Tap dialog
+    }
+
+    function showForgotPassword() {
+        document.getElementById('loginPage').style.display = 'none';
+        document.getElementById('forgotPasswordPage').style.display = 'block';
+    }
+
+    function showLogin() {
+        document.getElementById('forgotPasswordPage').style.display = 'none';
+        document.getElementById('loginPage').style.display = 'block';
+        document.getElementById('createAccountPage').style.display = 'none';
+    }
+
+    function showCreateAccount() {
+        document.getElementById('loginPage').style.display = 'none';
+        document.getElementById('createAccountPage').style.display = 'block';
+    }
+</script>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
