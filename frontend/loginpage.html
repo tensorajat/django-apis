@@ -45,7 +45,7 @@
         <img src="site_logo.png" alt="Company Logo" class="logo">
     </div>
     
-    <form>
+    <form onsubmit="login(event)">
         <div class="mb-3">
             <label for="email" class="form-label">Email Address</label>
             <input type="email" class="form-control" id="email" placeholder="Enter valid email">
@@ -96,7 +96,7 @@
         <img src="site_logo.png" alt="Company Logo" class="logo">
     </div>
     <h3 class="text-center mb-4">Create an Account</h3>
-    <form>
+    <form onsubmit="signup(event)">
         <div class="mb-3">
             <label for="createName" class="form-label">Name</label>
             <input type="text" class="form-control" id="createName" placeholder="Enter your name">
@@ -133,7 +133,7 @@
         });
         google.accounts.id.renderButton(
             document.getElementById('googleSignInButton'),
-            { theme: 'outline', size: 'large' }  // customization attributes
+            { theme: 'outline', size: 'large' }
         );
         google.accounts.id.renderButton(
             document.getElementById('googleSignUpButton'),
@@ -156,6 +156,61 @@
     function showCreateAccount() {
         document.getElementById('loginPage').style.display = 'none';
         document.getElementById('createAccountPage').style.display = 'block';
+    }
+
+    async function signup(event) {
+        event.preventDefault();
+        const name = document.getElementById('createName').value;
+        const email = document.getElementById('createEmail').value;
+        const password = document.getElementById('createPassword').value;
+
+        try {
+            const response = await fetch('http://127.0.0.1:8000/auth/signup/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name, email, password }),
+            });
+
+            if (response.ok) {
+                alert('Signup successful!');
+                showLogin();
+            } else {
+                const errorData = await response.json();
+                alert('Signup failed: ' + JSON.stringify(errorData));
+            }
+        } catch (error) {
+            alert('Signup failed: ' + error.message);
+        }
+    }
+
+    async function login(event) {
+        event.preventDefault();
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        try {
+            const response = await fetch('http://127.0.0.1:8000/auth/login/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, password }),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                localStorage.setItem('firstName', data.first_name);
+                alert('Login successful!');
+                window.location.href = 'index.html';
+            } else {
+                const errorData = await response.json();
+                alert('Login failed: ' + JSON.stringify(errorData));
+            }
+        } catch (error) {
+            alert('Login failed: ' + error.message);
+        }
     }
 </script>
 <script src="https://www.google.com/recaptcha/api.js" async defer></script>
